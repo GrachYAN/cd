@@ -1,0 +1,14 @@
+apple banana orange
+banana orange
+apple orange
+banana apple
+orange banana
+
+#!/bin/bash
+cat baskets.txt | python3 mapper1_son.py > mapper1_out.txt
+cat mapper1_out.txt | sort | python3 reducer1_son.py > candidate_pairs.txt
+cat baskets.txt | python3 mapper2_son.py > mapper2_out.txt
+num_baskets=$(wc -l < baskets.txt)
+cat mapper2_out.txt | sort | python3 reducer2_son.py --num_baskets $num_baskets > final_pairs.txt
+echo "频繁对结果："
+cat final_pairs.txt
