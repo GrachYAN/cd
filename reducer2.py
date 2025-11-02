@@ -1,30 +1,33 @@
 #!/usr/bin/env python3
 import sys
 
+# 支持度比例
 SUPPORT_RATIO = 0.01
 
-# 1. 读取总篮子数
-num_basket = int(sys.argv[1])
-global_support = int(num_basket * SUPPORT_RATIO)
+# 统计总篮子数（假定通过命令行参数传入）
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--num_baskets', type=int, required=True)
+args = parser.parse_args()
+total_baskets = args.num_baskets
+min_support = int(total_baskets * SUPPORT_RATIO)
 
-# 2. 累加pair计数
-last_pair = None
-last_count = 0
+# 累加计数
+current_pair = None
+current_sum = 0
 
 for line in sys.stdin:
-    parts = line.strip().split('\t')
-    if len(parts) != 3:
-        continue
-    pair = (parts[0], parts[1])
-    count = int(parts[2])
-    if pair == last_pair:
-        last_count += count
+    a, b, cnt = line.strip().split('\t')
+    pair = (a, b)
+    cnt = int(cnt)
+    if pair == current_pair:
+        current_sum += cnt
     else:
-        if last_pair and last_count >= global_support:
-            print(f"{last_pair[0]}\t{last_pair[1]}\t{last_count}")
-        last_pair = pair
-        last_count = count
+        if current_pair and current_sum >= min_support:
+            print(f"{current_pair[0]}\t{current_pair[1]}\t{current_sum}")
+        current_pair = pair
+        current_sum = cnt
 
-# 3. 输出最后一个pair
-if last_pair and last_count >= global_support:
-    print(f"{last_pair[0]}\t{last_pair[1]}\t{last_count}")
+# 最后一个pair
+if current_pair and current_sum >= min_support:
+    print(f"{current_pair[0]}\t{current_pair[1]}\t{current_sum}")
