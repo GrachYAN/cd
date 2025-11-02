@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 import sys
 
-# 加载候选对（假定通过分布式缓存传入）
-candidates = set()
-with open('candidate_pairs.txt', 'r') as f:
+# 加载候选对
+candidate_pairs = set()
+with open("candidate_pairs.txt") as f:
     for line in f:
-        x, y = line.strip().split('\t')
-        candidates.add((x, y))
+        items = line.strip().split('\t')
+        if len(items) == 2:
+            candidate_pairs.add(tuple(items))
 
-# 统计候选对出现次数
 for line in sys.stdin:
     basket = set(line.strip().split())
-    for a, b in candidates:
-        if a in basket and b in basket:
-            print(f"{a}\t{b}\t1")
+    for pair in candidate_pairs:
+        if pair[0] in basket and pair[1] in basket:
+            print(f"{pair[0]}\t{pair[1]}\t1")
